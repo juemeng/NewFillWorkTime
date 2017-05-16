@@ -10,10 +10,8 @@ import {
 } from 'react-native';
 
 import Button from 'react-native-button';
-import _ from 'lodash';
-// import {cheerio} from 'cheerio-without-node-native';
-import Ntlm from './utils/ntlm.js';
 import DeviceStorage from './utils/storage.js';
+import _ from 'lodash';
 
 const taskUrl = 'http://iems.shinetechchina.com.cn/MyIems/taskes/mytaskes.aspx';
 const verifyApi = 'http://iems.shinetechchina.com.cn/User/Login?ReturnUrl=%2F';
@@ -63,8 +61,10 @@ class App extends Component {
                 DeviceStorage.save("credential",{userName:this.state.userName,passWord:this.state.passWord});
                 if($("#logoutForm a") && $("#logoutForm a").text() === "注销")
                 {
+                    this.showMessage('有cookie');
                     this.reportTime();
                 }else{
+                    this.showMessage('没cookie');
                     let loginToken = $("input[name='__RequestVerificationToken']").val();
                     let verifyData = {'Email':userName,'Password':passWord,'__RequestVerificationToken':loginToken};
                     let verifyFormData = Object.keys(verifyData).map(function(keyName) {
@@ -107,7 +107,7 @@ class App extends Component {
         });
         let taskHtml = await taskResponse.text();
         $ = cheerio.load(taskHtml);
-
+        this.showMessage("标题是："+$("title").text());
         let reportTimeData = {};
         let inputs = $("form input");
         _.forEach(inputs, function (t) {
